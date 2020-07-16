@@ -1,0 +1,40 @@
+version: '3.0'
+services:
+  db:
+    image: postgres
+    restart: always
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgrespwd
+      - POSTGRES_DB=invue
+
+  test: &base
+    build: .
+    image: invue-test
+    command: bundle exec rspec -fd .
+    volumes:
+      - .:/invue
+      - gem_cache:/usr/local/bundle/gems
+    depends_on:
+      - db
+    environment:
+      - RAILS_ENV=test
+    stdin_open: true
+    tty: true
+
+  web:
+    <<: *base
+    build: .
+    command: "rails server -p 3000 -b '0.0.0.0'"
+    ports:
+      - 3000:3000
+    environment:
+      - RAILS_ENV=development
+
+
+volumes:
+  gem_cache:
+  db_data:
+

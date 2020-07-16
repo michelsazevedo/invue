@@ -1,0 +1,22 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: db
+  username: postgres
+  password: postgrespwd
+  pool: <%= ENV.fetch('RAILS_MAX_THREADS') { 5 } %>
+
+development:
+  <<: *default
+  database: invue_development
+
+test:
+  <<: *default
+  database: invue_test
+
+production:
+  <<: *default
+  host: <%= ENV['INVUE_DATABASE_HOST'] %>
+  database: <%= ENV['INVUE_DATABASE_NAME'] %>
+  username: <%= ENV['INVUE_DATABASE_USERNAME'] %>
+  password: <%= ENV['INVUE_DATABASE_PASSWORD'] %>
