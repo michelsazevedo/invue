@@ -5,3 +5,4 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+Invoice.create(subject: "Spotfy Monthly Subscription", due_date: 3.days.from_now, amount: 19.90)
