@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: invue
+  labels:
+    app: invue
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: invue
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: invue
+    spec:
+      containers:
+      - name: invue
+        image: docker.io/michelsazevedo/invue
+        ports:
+        - containerPort: 80
+        env:
+          - name: DATABASE_URL
+            valueFrom:
+              secretKeyRef:
+                name: invue-secrets
+                key: database-url
+          - name: SECRET_KEY_BASE
+            secretKeyRef:
+              name: invue-secrets
+              key: secret-key-base
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests: 
+            memory: "256Mi"
+            cpu: "300m"    
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+
